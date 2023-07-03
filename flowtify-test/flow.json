@@ -1,0 +1,36 @@
+{
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "access.mainnet.nodes.onflow.org:9000",
+		"sandboxnet": "access.sandboxnet.nodes.onflow.org:9000",
+		"testnet": "access.devnet.nodes.onflow.org:9000"
+	},
+	"contracts": {
+		"flowtify": "./cadence/sample.cdc"
+	},
+	"accounts": {
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"key": "73488483dab611f5acd7b87923a2f3d0426a283c455c910cb6907686064249fe"
+		},
+		"dingo": {
+			"address": "179b6b1cb6755e31",
+			"key": "73488483dab611f5acd7b87923a2f3d0426a283c455c910cb6907686064249fc"
+		},
+		"acc2": {
+			"address": "f3fcd2c1a78f5eee",
+			"key": "73488483dab611f5acd7b87923a2f3d0426a283c455c910cb6907686064249ee"
+		},
+		"acc3": {
+			"address": "e03daebed8ca0615",
+			"key": "73488483dab611f5acd7b87923a2f3d0426a283c455c910cb690768606424915"
+		}
+	},
+	"deployments": {
+		"emulator": {
+			"emulator-account": [
+				"flowtify"
+			]
+		}
+	}
+}

@@ -80,5 +80,3 @@ const getTxnDetails = async (id) => {
 }
 //getTxnDetails('a587a693badfe3b544b4658aa7f10ddbf02c187d3723359776b7e55741fea062')
 getTxns()
-
-test

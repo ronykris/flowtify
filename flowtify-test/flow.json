@@ -6,7 +6,7 @@
 		"testnet": "access.devnet.nodes.onflow.org:9000"
 	},
 	"contracts": {
-		"flowtify": "./cadence/sample.cdc"
+		"flowtify": "./cadence/flowtify.cdc"
 	},
 	"accounts": {
 		"emulator-account": {
@@ -24,6 +24,10 @@
 		"acc3": {
 			"address": "e03daebed8ca0615",
 			"key": "73488483dab611f5acd7b87923a2f3d0426a283c455c910cb690768606424915"
+		},
+		"testnet-acc": {
+			"address": "f386a98db99081f1",
+            "key": "dcad53d0fe43fd1eaf6fda717487d2e0fc557dae858be7cad4abe79ff09ed80d"
 		}
 	},
 	"deployments": {

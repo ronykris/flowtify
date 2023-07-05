@@ -20,10 +20,11 @@ const sign = (privateKey, message) => {
   return signature
 }
 
-export default function handler(req, res) {
-  const key = req.query.p_key
+export default function handler(req, res) {  
   const msg = req.query.s_msg
-  const signature = sign(key, msg)
+  //emulator private key from flow.json
+  var pkey = "73488483dab611f5acd7b87923a2f3d0426a283c455c910cb6907686064249fe"
+  const signature = sign(pkey, msg)  
   //console.log(signature)
   res.status(200).send(signature)
 }

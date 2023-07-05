@@ -33,91 +33,61 @@ export default function MultiAuth() {
       return text
     }
     
-    const dingoFn = async (txAccount) => { 
-      const signer = async() => { 
-        const key = '73488483dab611f5acd7b87923a2f3d0426a283c455c910cb6907686064249fc'
-        const msg = 'Sign the test txn'        
-        const res = await fetch(`/api/sign?p_key=${key}&s_msg=${msg}`)          
-        const data = await res.text()        
-        return { 
-          addr: "0x179b6b1cb6755e31", 
-          keyId: 0, 
-          signature: data                  
-        }       
-      }      
-      return { 
-        ...txAccount, 
-        addr: "0x179b6b1cb6755e31", 
-        keyId: 0, 
-        signingFunction: signer
-      } 
-    }
+    const authorizationFunction = (address, keyId) =>
+        async (account) => {
+      return {
+        ...account,
+        tempId: `${address}-${keyId}`,
+        addr: address,
+        keyId: Number(keyId),
+        signingFunction: async signable => {
+          var signed = await fetch(`/api/sign?s_msg=${signable.message}`)
 
-
-
-    const payerFn = async (txAccount) => { 
-      const signer = async() => { 
-        const key = '73488483dab611f5acd7b87923a2f3d0426a283c455c910cb6907686064249ee'
-        const msg = 'Sign the test txn'
-        const res = await fetch(`/api/sign?p_key=${key}&s_msg=${msg}`)          
-        const data = await res.text()        
-        return { 
-          addr: "0xf3fcd2c1a78f5eee", 
-          keyId: 0, 
-          signature: data
-        }        
-      }      
-      return { 
-        ...txAccount, 
-        addr: "0xf3fcd2c1a78f5eee", 
-        keyId: 0, 
-        signingFunction: signer
-      } 
-    }
-
-    const auth3Fn = async (txAccount) => { 
-      const signer = async() => { 
-        const key = '73488483dab611f5acd7b87923a2f3d0426a283c455c910cb690768606424915'
-        const msg = 'Sign the test txn'
-        const res = await fetch(`/api/sign?p_key=${key}&s_msg=${msg}`)          
-        const data = await res.text()        
-        return { 
-          addr: "0xe03daebed8ca0615", 
-          keyId: 0, 
-          signature: data                  
-        }         
-      }      
-      return { 
-        ...txAccount, 
-        addr: "0xe03daebed8ca0615", 
-        keyId: 0, 
-        signingFunction: signer
-      } 
+          console.log(signed);
+          return {
+            addr: address,
+            keyId: Number(keyId),
+            signature: await signed.text(),
+          }
+        }
+      }
     }
 
     const txnId = await fcl.mutate({
       cadence: `
-        import flowtify from 0xf8d6e0586b0a20c7
-        
-        transaction (newMsg: String) {          
-          prepare(acct1: AuthAccount, acct2: AuthAccount, acct3: AuthAccount) {
-            log("Authorizer...")
-            
+        import FungibleToken from 0xee82856bf20e2aa6
+        import FlowToken from 0x0ae53cb6e3f42a79
+
+        transaction {
+
+          let senderVault: &FungibleToken.Vault
+          let receiverVault: &FungibleToken.Vault
+
+          prepare(sender: AuthAccount, user: AuthAccount) {
+
+            // Get a reference to the signer's stored vault
+            self.senderVault = sender.borrow<&FungibleToken.Vault>(from: /storage/flowTokenVault)
+            \t\t\t?? panic("Could not borrow reference to the owner's Vault!")
+
+            self.receiverVault = user.borrow<&FungibleToken.Vault>(from: /storage/flowTokenVault)
+            \t\t\t?? panic("Could not borrow reference to the owner's Vault!")
           }
+
           execute {
-            log("Authorizer example...")
-            flowtify.updateMsg(newMsg: newMsg)
-            log(newMsg)
-          }
-        }
-      `,
+
+            // Deposit the withdrawn tokens in the recipient's receiver
+            self.receiverVault.deposit(from: <- self.senderVault.withdraw(amount: 1.0))
+          }    
+        }`,
       args: (arg, t) => [
-        arg("Authorized...", t.String)
+        //arg("Authorized...", t.String)
       ],
-      proposer: dingoFn,
-      payer: dingoFn,      
-      authorizations: [dingoFn, payerFn, auth3Fn],
-      //authorization: [dingoFn],
+      proposer: authorizationFunction("f8d6e0586b0a20c7",0),
+      payer: authorizationFunction("f8d6e0586b0a20c7",0),
+      authorizations: [
+        authorizationFunction("f8d6e0586b0a20c7",0),
+        fcl.currentUser,
+      ],
       limit: 50
     })
     console.log('TxnID ',txnId)
@@ -128,10 +98,11 @@ export default function MultiAuth() {
   const getText = async () => {
     const res = await fcl.send([
       fcl.script`
-        import flowtify from 0xf8d6e0586b0a20c7
+        //import flowtify from 0xf8d6e0586b0a20c7
 
         pub fun main(): String {
-          return flowtify.msg
+        return "42"
+         // return flowtify.msg
         }
       `
     ]).then(fcl.decode)

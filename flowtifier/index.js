@@ -1,30 +1,32 @@
-import nodemailer from 'nodemailer'
+import express from 'express'
+import cors from 'cors'
+import bodyParser from 'body-parser'
+import notify from './notify.js'
 
-const from = 'marlen63@ethereal.email'
-const msg = 'A txn is waiting for your approval...'
-const to = 'rony.kris@gmail.com'
+const app = express()
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.json())
 
-//var smtpTransport = nodemailer.createTransport(`smtps://andronoop09%40gmail.com:`+encodeURIComponent('R0nyr4y4n'))
-const smtpTransport = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,  
-    auth: {
-        user: from,
-        pass: "Dtj7vxqf5vuQc3rsVd"
+const PORT = process.env.PORT || 3001;
+
+app.get('/', (req, res) => {
+    res.send('Alive!');
+});
+
+app.post('/notify', async(req, res) => {
+    if (!req.body) {        
+        throw new Error("Body empty...Resend request with data in body")        
     }
-})
-
-const mailOptions = {
-    from: from,
-    to: to,
-    subject: "A txn is waiting to be approved",
-    text: msg
-}
-
-smtpTransport.sendMail(mailOptions, (error, response)=> {
-    if (error) {
-        console.log(error)
+    const addresses = req.body
+    const result = await notify(addresses)
+    if (result === 'success') {
+        res.send({ status: 'success', msg: 'email sent'})
     } else {
-        console.log("Email was sent successfully... " + response)
+        res.send({ status: 'error', msg: 'something went wrong'})
     }
 })
+
+app.listen(PORT, () => {
+    console.log("Server Listening on PORT:", PORT);
+});

@@ -1,22 +1,27 @@
-//batchSend.js
 import SibApiV3Sdk from 'sib-api-v3-sdk'
 import config from 'dotenv/config'
 import * as fcl from "@onflow/fcl";
 import "./flow/config.js";
 
 
-    const sendEmail = async(obj) => {
-        console.log(obj)        
-        SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey = process.env.API_KEY
+const sendEmail = async(obj) => {
+    console.log(obj)        
+    SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey = process.env.API_KEY
+    try {
         const data = await new SibApiV3Sdk.TransactionalEmailsApi().sendTransacEmail({
-                "sender":{ "email":"notifier@flocial.com", "name":"Flocial"},
-                "subject": "You have a txn waiting to be approved...",
-                "htmlContent":"<!DOCTYPE html><html><body><h3>Reminder</h3><p>A txn is waiting for your approval...</p></body></html>",
-                "messageVersions":[{ "to": obj }]            
-           })
-        console.log(data)           
-    }
-
+            "sender":{ "email":"notifier@flocial.com", "name":"Flocial"},
+            "subject": "You have a txn waiting to be approved...",
+            "htmlContent":"<!DOCTYPE html><html><body><h3>Reminder</h3><p>A txn is waiting for your approval...</p></body></html>",
+            "messageVersions":[{ "to": obj }]            
+        })
+        //console.log(data) 
+        return data
+    } catch (e) {
+        console.error(e)
+        return 'error'
+    }              
+}
+/*
 const emails = [
     {
        "email":"andronoop09@gmail.com",
@@ -30,15 +35,16 @@ const emails = [
         "email":"afroblue09@gmail.com",
         "name":"Afro"
      }              
-]
+]*/
 
-const addresses = ["0xb5bd1bfcd1f36235", "0xf29693609c4d4494"]
-const main = async (addresses) => {
+
+const notify = async (addresses) => {
     if (!Array.isArray(addresses) || addresses === null) {
         throw new Error("Invalid argument OR No argument was sent")
     }
     try {
-
+        let result = []
+        const addressCount = addresses.length
         addresses.forEach(async(element) => {
             const profile = await fcl.query({            
                 cadence: `
@@ -57,11 +63,19 @@ const main = async (addresses) => {
                     "name": profile.fullname
                 }
             ]
-            await sendEmail(emails)    
+            const res = await sendEmail(emails)
+            console.log('Res : ',res.messageIds)
+            result.push(res.messageIds)
         });
-
-    } catch (e) { console.error(e)}
-    
+        console.log('Result : ', result)
+        if ( result.length === addressCount ) {
+            return 'success'
+        }        
+    } catch (e) { 
+        console.error(e)
+        return 'error'
+    }    
 }
  
-main(addresses)
+export default notify
+//main(addresses)

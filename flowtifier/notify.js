@@ -43,9 +43,9 @@ const notify = async (addresses) => {
         throw new Error("Invalid argument OR No argument was sent")
     }
     try {
-        let result = []
+        let emails = []
         const addressCount = addresses.length
-        addresses.forEach(async(element) => {
+        for (const address of addresses) {        
             const profile = await fcl.query({            
                 cadence: `
                     import Profile from 0xf41fd3cb80a5dce4
@@ -54,21 +54,19 @@ const notify = async (addresses) => {
                     return Profile.read(address)
                     }
                 `,
-                args: (arg, t) => [arg(element, t.Address)]
+                args: (arg, t) => [arg(address, t.Address)]
             })            
             console.log('Response ', profile)
-            const emails = [
-                {
+            const contactInfo = {
                     "email": profile.email,
                     "name": profile.fullname
                 }
-            ]
-            const res = await sendEmail(emails)
-            console.log('Res : ',res.messageIds)
-            result.push(res.messageIds)
-        });
-        console.log('Result : ', result)
-        if ( result.length === addressCount ) {
+            emails.push(contactInfo)
+        }
+        console.log('Emails : ', emails)
+        const res = await sendEmail(emails)
+        console.log('Res : ',res.messageIds)
+        if ( res.messageIds ) {
             return 'success'
         }        
     } catch (e) { 

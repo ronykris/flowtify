@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import * as fcl from "@onflow/fcl";
 import "@/flow/config";
 
-const LibraryPage = () => {
+const SendPage = () => {
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -118,14 +118,25 @@ const LibraryPage = () => {
           ))
         )}
       </div>
-      <div>
-        <h2>Selected Profiles:</h2>
+      <div className="mb-28">
+        <h2 className="">Selected Profiles:</h2>
         {selectedProfiles.map((address, index) => (
-          <div key={index}>{address}</div>
+      
+          <div key={index} className="">{address}</div>
+         
         ))}
+      </div>
+      <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center bg-white p-4">
+        <button
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          onClick={() => console.log("Proceed clicked")}
+          disabled={selectedProfiles.length === 0}
+        >
+          Proceed
+        </button>
       </div>
     </div>
   );
 };
 
-export default LibraryPage;
+export default SendPage;

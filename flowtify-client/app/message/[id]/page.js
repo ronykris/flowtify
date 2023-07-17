@@ -6,6 +6,12 @@ export default function Message() {
   console.log(pathname)
   const path = pathname.split("/")
   const id = path[2]
+  const names = id.split("+")
+  let receivers = ""
+  for (let i = 0; i < names.length; i++) {
+    const name = names[i]
+    receivers += name + ", "
+  }
 
   return (
     <div class="flex items-center justify-center p-12">
@@ -15,7 +21,7 @@ export default function Message() {
             <label class="block text-gray-700 text-sm font-bold mb-2" for="receivers">
               Receivers
             </label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="receivers" type="text" placeholder="Receivers" value={id} />
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="receivers" type="text" placeholder="Receivers" value={receivers} />
           </div>
           <div class="mb-6">
             <label class="block text-gray-700 text-sm font-bold mb-2" for="msg">

@@ -24,10 +24,12 @@ const sendEmail = async(obj, msg) => {
 
 const notify = async (addresses, message) => {
     if (!Array.isArray(addresses) || addresses === null) {
-        throw new Error("Invalid argument OR No argument was sent")
+        //throw new Error("Invalid argument OR No argument was sent")
+        return 'error'
     }
     if (!message) {
-        throw new Error("Please add a message")
+        //throw new Error("Please add a message")
+        return 'error'
     }
     try {
         let emails = []

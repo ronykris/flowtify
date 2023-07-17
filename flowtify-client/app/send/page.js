@@ -2,8 +2,10 @@
 import React, { useEffect, useState } from "react";
 import * as fcl from "@onflow/fcl";
 import "@/flow/config";
+import { useRouter } from "next/navigation";
 
 const SendPage = () => {
+  const router = useRouter();
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,17 +56,20 @@ const SendPage = () => {
     if (selectedProfile.isSelected) {
       setSelectedProfiles((prevSelectedProfiles) => [
         ...prevSelectedProfiles,
-        selectedProfile.address,
+        selectedProfile.username,
       ]);
     } else {
       setSelectedProfiles((prevSelectedProfiles) =>
         prevSelectedProfiles.filter(
-          (address) => address !== selectedProfile.address
+          (username) => username !== selectedProfile.username
         )
       );
     }
   };
-
+  const handleProceed = () => {
+     const selectedUsernames = selectedProfiles.join("+");
+  router.push(`/message/${selectedUsernames}`);
+  };
   return (
     <div className="">
       <div className="flex items-center justify-center my-5">
@@ -108,7 +113,7 @@ const SendPage = () => {
                   View Profile
                 </a>
                 <button
-  className={`bg-${profile.isSelected ? 'red' : 'blue'}-500 hover:bg-${profile.isSelected ? 'red' : 'blue'}-700 text-white font-bold py-2 px-4 rounded`}
+  className={`bg-blue-500 text-white font-bold py-2 px-4 rounded`}
   onClick={() => toggleSelect(index)}
 >
   {profile.isSelected ? "Remove" : "Select"}
@@ -120,16 +125,16 @@ const SendPage = () => {
       </div>
       <div className="mb-28">
         <h2 className="">Selected Profiles:</h2>
-        {selectedProfiles.map((address, index) => (
+        {selectedProfiles.map((username, index) => (
       
-          <div key={index} className="">{address}</div>
+          <div key={index} className="">{username}</div>
          
         ))}
       </div>
       <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center bg-white p-4">
         <button
           className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => console.log("Proceed clicked")}
+          onClick={handleProceed}
           disabled={selectedProfiles.length === 0}
         >
           Proceed

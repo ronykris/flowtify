@@ -1,9 +1,9 @@
 "use client"
 
-export default function message({ params }){
+export default function Message({params}) {
     return (
-        <div>
-            Hi 
-        </div>
-    )
-}
+      <div>
+        <p>{params.id}</p>
+      </div>
+    );
+  }

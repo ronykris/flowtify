@@ -67,8 +67,8 @@ const SendPage = () => {
     }
   };
   const handleProceed = () => {
-     const selectedUsernames = selectedProfiles.join("+");
-  router.push(`/message/${selectedUsernames}`);
+    const selectedUsernames = selectedProfiles.join("+");
+    router.push(`/message/${selectedUsernames}`);
   };
   return (
     <div className="">
@@ -81,7 +81,7 @@ const SendPage = () => {
           onChange={handleSearch}
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mx-10 mb-10">
+      <div className="grid mb-28 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mx-10 mb-10">
         {isLoading ? (
           <div className="flex col-span-3 items-center justify-center mt-20">
             Loading..
@@ -113,25 +113,22 @@ const SendPage = () => {
                   View Profile
                 </a>
                 <button
-  className={`bg-blue-500 text-white font-bold py-2 px-4 rounded`}
-  onClick={() => toggleSelect(index)}
->
-  {profile.isSelected ? "Remove" : "Select"}
-</button>
+                  className={`bg-blue-500 text-white font-bold py-2 px-4 rounded`}
+                  onClick={() => toggleSelect(index)}
+                >
+                  {profile.isSelected ? "Remove" : "Select"}
+                </button>
               </div>
             </div>
           ))
         )}
       </div>
-      <div className="mb-28">
-        <h2 className="">Selected Profiles:</h2>
-        {selectedProfiles.map((username, index) => (
-      
-          <div key={index} className="">{username}</div>
-         
-        ))}
-      </div>
-      <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center bg-white p-4">
+      <div className="fixed bottom-0 left-0 right-0 flex flex-col justify-center items-center bg-white p-4">
+        <div className="mb-4">
+          {selectedProfiles.map((username, index) => (
+            <p key={index} className="">{username}</p>
+          ))}
+        </div>
         <button
           className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
           onClick={handleProceed}

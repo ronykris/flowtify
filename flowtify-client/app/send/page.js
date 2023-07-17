@@ -4,13 +4,14 @@ import * as fcl from "@onflow/fcl";
 import "@/flow/config";
 import { useRouter } from "next/navigation";
 
+
 const SendPage = () => {
   const router = useRouter();
   const [profiles, setProfiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProfiles, setFilteredProfiles] = useState([]);
-  const [selectedProfiles, setSelectedProfiles] = useState([]);
+  const [selectedProfiles, setSelectedProfiles] = useState([]);  
 
   const getProfileData = async () => {
     const profileData = await fcl.query({
@@ -56,18 +57,18 @@ const SendPage = () => {
     if (selectedProfile.isSelected) {
       setSelectedProfiles((prevSelectedProfiles) => [
         ...prevSelectedProfiles,
-        selectedProfile.username,
-      ]);
+        selectedProfile.address,
+      ]);      
     } else {
       setSelectedProfiles((prevSelectedProfiles) =>
         prevSelectedProfiles.filter(
-          (username) => username !== selectedProfile.username
-        )
-      );
+          (address) => address !== selectedProfile.address
+        ));
+      
     }
   };
   const handleProceed = () => {
-    const selectedUsernames = selectedProfiles.join("+");
+    const selectedUsernames = selectedProfiles.join("+");    
     router.push(`/message/${selectedUsernames}`);
   };
   return (

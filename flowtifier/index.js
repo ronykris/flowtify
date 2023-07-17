@@ -18,12 +18,12 @@ app.post('/notify', async(req, res) => {
     if (!req.body) {        
         throw new Error("Body empty...Resend request with data in body")        
     }
-    const body = req.body
+    const body = req.body    
     const result = await notify(body.addresses, body.message)
     if (result === 'success') {
         res.send({ status: 'success', msg: 'email sent'})
     } else {
-        res.send({ status: 'error', msg: 'something went wrong'})
+        res.send({ status: 'error', msg: result.message})
     }
 })
 

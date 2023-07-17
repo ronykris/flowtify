@@ -22,14 +22,14 @@ const sendEmail = async(obj, msg) => {
     }              
 }
 
-const notify = async (addresses, message) => {
+const notify = async (addresses, message) => {    
     if (!Array.isArray(addresses) || addresses === null) {
         //throw new Error("Invalid argument OR No argument was sent")
-        return 'error'
+        return ({status: 'error', message: 'Invalid argument OR No argument was sent'})
     }
     if (!message) {
         //throw new Error("Please add a message")
-        return 'error'
+        return ({status: 'error', message: 'Please add a message'})
     }
     try {
         let emails = []
@@ -60,7 +60,7 @@ const notify = async (addresses, message) => {
         }        
     } catch (e) { 
         console.error(e)
-        return 'error'
+        return ({status: 'error', message: e.message})
     }    
 }
  

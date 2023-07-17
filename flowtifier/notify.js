@@ -4,14 +4,14 @@ import * as fcl from "@onflow/fcl";
 import "./flow/config.js";
 
 
-const sendEmail = async(obj) => {
+const sendEmail = async(obj, msg) => {
     console.log(obj)        
     SibApiV3Sdk.ApiClient.instance.authentications['api-key'].apiKey = process.env.API_KEY
     try {
         const data = await new SibApiV3Sdk.TransactionalEmailsApi().sendTransacEmail({
             "sender":{ "email":"notifier@flocial.com", "name":"Flocial"},
-            "subject": "You have a txn waiting to be approved...",
-            "htmlContent":"<!DOCTYPE html><html><body><h3>Reminder</h3><p>A txn is waiting for your approval...</p></body></html>",
+            "subject": "You have a Notification from FLOWTIFY",
+            "htmlContent":`<!DOCTYPE html><html><body><h3>Notification</h3><p>${msg}</p></body></html>`,
             "messageVersions":[{ "to": obj }]            
         })
         //console.log(data) 
@@ -21,26 +21,13 @@ const sendEmail = async(obj) => {
         return 'error'
     }              
 }
-/*
-const emails = [
-    {
-       "email":"andronoop09@gmail.com",
-       "name":"Andro Noop"
-    },
-    {
-       "email":"rony.kris@gmail.com",
-       "name":"Rony"
-    },
-    {
-        "email":"afroblue09@gmail.com",
-        "name":"Afro"
-     }              
-]*/
 
-
-const notify = async (addresses) => {
+const notify = async (addresses, message) => {
     if (!Array.isArray(addresses) || addresses === null) {
         throw new Error("Invalid argument OR No argument was sent")
+    }
+    if (!message) {
+        throw new Error("Please add a message")
     }
     try {
         let emails = []
@@ -64,7 +51,7 @@ const notify = async (addresses) => {
             emails.push(contactInfo)
         }
         console.log('Emails : ', emails)
-        const res = await sendEmail(emails)
+        const res = await sendEmail(emails, message)
         console.log('Res : ',res.messageIds)
         if ( res.messageIds ) {
             return 'success'
